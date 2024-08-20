@@ -2,28 +2,48 @@
 # Implement advanced features for 7G and 8G development
 
 # Import necessary libraries
-import networkx as nx
-import tensorflow as tf
-import numpy as np
-import matplotlib.pyplot as plt
-from qiskit import QuantumCircuit, execute, Aer
-from skyfield.api import load, wgs84
 import logging
-from typing import List, Tuple
-import os
 import sys
-import git
-import schedule
 import time
 from datetime import timedelta
-from flask import Flask, request, jsonify
-from scipy.signal import savgol_filter
-from cryptography.fernet import Fernet
+from typing import List, Tuple
+
+# Third-party imports
+import git
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
 import pandas as pd
+import schedule
+import tensorflow as tf
+from cryptography.fernet import Fernet
+from flask import Flask, jsonify, request
+from qiskit import Aer, QuantumCircuit, execute
+from scipy.signal import savgol_filter
+from skyfield.api import load, wgs84
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# Auto-update function
+def auto_update():
+    try:
+        repo = git.Repo(search_parent_directories=True)
+        origin = repo.remotes.origin
+        origin.pull('7G_8G_development')
+        current_commit = repo.head.commit
+        if current_commit != repo.commit('origin/7G_8G_development'):
+            logging.info("Updates found. Restarting application...")
+            os.execv(sys.executable, ['python'] + sys.argv)
+        else:
+            logging.info("No updates available.")
+    except git.GitCommandError as e:
+        logging.error(f"Git command error during auto-update: {str(e)}")
+    except git.InvalidGitRepositoryError:
+        logging.error("Invalid Git repository. Auto-update failed.")
+    except Exception as e:
+        logging.error(f"Unexpected error during auto-update: {str(e)}")
 
 class NetworkPlanner:
     def __init__(self):
@@ -270,24 +290,28 @@ def main():
     return edge_app
 
 if __name__ == "__main__":
-    # Configure logging
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    try:
+        # Perform auto-update check before running main tasks
+        auto_update()
 
-    # Perform auto-update check before running main tasks
-    auto_update()
+        # Run main tasks
+        main()
 
-    # Run main tasks
-    main()
+        logging.info("7G and 8G development tasks completed successfully.")
+        logging.info("Next steps: Integrate AI-driven optimization and terahertz communication modules.")
 
-    logging.info("7G and 8G development tasks completed successfully.")
-    logging.info("Next steps: Integrate AI-driven optimization and terahertz communication modules.")
+        # Schedule periodic update checks
+        schedule.every(1).hour.do(auto_update)
 
-    # Schedule periodic update checks
-    schedule.every(1).hour.do(auto_update)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+    except KeyboardInterrupt:
+        logging.info("Application terminated by user.")
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {str(e)}", exc_info=True)
+    finally:
+        logging.info("Application shutting down.")
 
 class EdgeComputing:
     def __init__(self):
@@ -442,51 +466,8 @@ class DataProcessor:
         plt.savefig('time_series_analysis.png')
         plt.close()
 
-# Auto-update function
-def auto_update():
-    try:
-        repo = git.Repo(search_parent_directories=True)
-        origin = repo.remotes.origin
-        origin.pull('7G_8G_development')
-        current_commit = repo.head.commit
-        if current_commit != repo.commit('origin/7G_8G_development'):
-            logging.info("Updates found. Restarting application...")
-            os.execv(sys.executable, ['python'] + sys.argv)
-        else:
-            logging.info("No updates available.")
-    except git.GitCommandError as e:
-        logging.error(f"Git command error during auto-update: {str(e)}")
-    except git.InvalidGitRepositoryError:
-        logging.error("Invalid Git repository. Auto-update failed.")
-    except Exception as e:
-        logging.error(f"Unexpected error during auto-update: {str(e)}")
+
 
 # Other functions and classes...
 
-# Run main function
-if __name__ == "__main__":
-    # Configure logging
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-    # Perform auto-update check before running main tasks
-    auto_update()
-
-    try:
-        # Run main tasks
-        main()
-        logging.info("7G and 8G development tasks completed successfully.")
-        logging.info("Next steps: Integrate AI-driven optimization and terahertz communication modules.")
-    except Exception as e:
-        logging.error(f"An error occurred during execution: {str(e)}")
-
-    # Schedule periodic update checks
-    schedule.every(1).hour.do(auto_update)
-
-    try:
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
-    except KeyboardInterrupt:
-        logging.info("Application terminated by user.")
-    except Exception as e:
-        logging.error(f"An unexpected error occurred: {str(e)}")
+# This block has been moved to the top-level execution block

@@ -1,6 +1,18 @@
-import pytest
+# Standard library imports
 from unittest.mock import Mock, MagicMock
-from main import main, NetworkPlanner, QuantumProcessor, SatelliteCommunication, SpectrumManager, EdgeComputing
+
+# Third-party imports
+import pytest
+
+# Local imports
+from main import (
+    main,
+    NetworkPlanner,
+    QuantumProcessor,
+    SatelliteCommunication,
+    SpectrumManager,
+    EdgeComputing
+)
 
 def test_main_typical_case(mocker):
     # Mock the classes and their methods
