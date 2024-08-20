@@ -309,9 +309,9 @@ if __name__ == "__main__":
         try:
             repo = git.Repo(search_parent_directories=True)
             origin = repo.remotes.origin
-            origin.pull()
+            origin.pull('7G_8G_development')
             current_commit = repo.head.commit
-            if current_commit != repo.commit('origin/main'):
+            if current_commit != repo.commit('origin/7G_8G_development'):
                 print("Updates found. Restarting application...")
                 os.execv(sys.executable, ['python'] + sys.argv)
             else:
