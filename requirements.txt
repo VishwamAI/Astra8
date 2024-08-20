@@ -18,6 +18,8 @@ skyfield==1.41
 # Spectrum Management
 scipy==1.9.1
 matplotlib==3.5.3
+seaborn==0.12.2
+pywavelets==1.4.1
 
 # Edge Computing
 flask==1.1.4

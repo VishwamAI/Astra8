@@ -254,51 +254,71 @@ def spectrum_management_tasks():
     print("Running advanced spectrum management tasks...")
 
     # Generate sample frequency spectrum including terahertz range
-    frequencies = np.logspace(9, 14, 1000)  # 1 GHz to 100 THz
+    frequencies = np.logspace(9, 14, 5000)  # 1 GHz to 100 THz, increased resolution
     spectrum = np.abs(np.sin(frequencies/1e12) * np.exp(-frequencies/1e13))
 
     # Add some noise
     noise = np.random.normal(0, 0.05, spectrum.shape)
     noisy_spectrum = spectrum + noise
 
+    # Apply Savitzky-Golay filter to reduce noise
+    from scipy.signal import savgol_filter
+    filtered_spectrum = savgol_filter(noisy_spectrum, window_length=51, polyorder=3)
+
     # Perform advanced spectrum analysis
-    peak_freq = frequencies[np.argmax(noisy_spectrum)]
-    bandwidth = np.sum(noisy_spectrum > 0.5 * np.max(noisy_spectrum)) * (frequencies[1] - frequencies[0])
-    spectral_efficiency = np.trapz(noisy_spectrum, frequencies) / (np.max(frequencies) - np.min(frequencies))
+    peak_freq = frequencies[np.argmax(filtered_spectrum)]
+    bandwidth = np.sum(filtered_spectrum > 0.5 * np.max(filtered_spectrum)) * (frequencies[1] - frequencies[0])
+    spectral_efficiency = np.trapz(filtered_spectrum, frequencies) / (np.max(frequencies) - np.min(frequencies))
 
     print(f"Peak frequency: {peak_freq:.2e} Hz")
     print(f"Estimated bandwidth: {bandwidth:.2e} Hz")
     print(f"Spectral efficiency: {spectral_efficiency:.2e}")
 
-    # Simulate terahertz communication
-    def terahertz_channel_model(distance, frequency):
-        # Simplified path loss model for terahertz communication
+    # Simulate terahertz communication with environmental factors
+    def terahertz_channel_model(distance, frequency, humidity, temperature):
         c = 3e8  # Speed of light
         wavelength = c / frequency
-        path_loss = 20 * np.log10(4 * np.pi * distance / wavelength)
-        return path_loss
 
-    distances = np.linspace(1, 100, 100)  # 1 to 100 meters
+        # Basic path loss
+        path_loss = 20 * np.log10(4 * np.pi * distance / wavelength)
+
+        # Additional loss due to water vapor absorption (simplified model)
+        water_vapor_loss = 0.05 * humidity * distance * (frequency / 1e12)**2
+
+        # Temperature effect (simplified model)
+        temp_factor = 1 + 0.01 * (temperature - 20)  # 20°C as reference
+
+        return (path_loss + water_vapor_loss) * temp_factor
+
+    distances = np.linspace(1, 100, 500)  # 1 to 100 meters, increased resolution
     terahertz_freq = 1e12  # 1 THz
-    path_losses = [terahertz_channel_model(d, terahertz_freq) for d in distances]
+    humidity = 50  # 50% relative humidity
+    temperature = 25  # 25°C
+    path_losses = [terahertz_channel_model(d, terahertz_freq, humidity, temperature) for d in distances]
 
     # Visualize the spectrum and terahertz path loss
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 14))
 
-    ax1.semilogx(frequencies, noisy_spectrum)
+    ax1.semilogx(frequencies, filtered_spectrum)
     ax1.set_title("Advanced Frequency Spectrum Analysis")
     ax1.set_xlabel("Frequency (Hz)")
     ax1.set_ylabel("Magnitude")
     ax1.grid(True)
+    ax1.annotate(f'Peak: {peak_freq:.2e} Hz', xy=(peak_freq, filtered_spectrum[np.argmax(filtered_spectrum)]),
+                 xytext=(0.7, 0.95), textcoords='axes fraction',
+                 arrowprops=dict(facecolor='black', shrink=0.05))
 
     ax2.plot(distances, path_losses)
-    ax2.set_title("Terahertz Communication Path Loss")
+    ax2.set_title(f"Terahertz Communication Path Loss\n(Humidity: {humidity}%, Temperature: {temperature}°C)")
     ax2.set_xlabel("Distance (m)")
     ax2.set_ylabel("Path Loss (dB)")
     ax2.grid(True)
+    ax2.annotate(f'Loss at 50m: {path_losses[249]:.2f} dB', xy=(50, path_losses[249]),
+                 xytext=(0.7, 0.95), textcoords='axes fraction',
+                 arrowprops=dict(facecolor='black', shrink=0.05))
 
     plt.tight_layout()
-    plt.savefig("advanced_spectrum_analysis.png")
+    plt.savefig("advanced_spectrum_analysis.png", dpi=300)
     plt.close()
 
     print("Advanced spectrum management tasks completed. Analysis saved in 'advanced_spectrum_analysis.png'")
