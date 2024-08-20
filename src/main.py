@@ -57,6 +57,7 @@ def auto_update():
     except Exception as e:
         logging.error("Unexpected error during auto-update: %s", str(e))
 
+
 class NetworkPlanner:
     def __init__(self):
         self.graph = nx.Graph()
@@ -98,11 +99,16 @@ class NetworkPlanner:
             model = self._create_model()
             X = self._generate_input_data(nodes, connections)
             y = self._generate_output_data(len(nodes))
-            history = model.fit(X, y, epochs=20, validation_split=0.2, verbose=0)
+            history = model.fit(
+                X, y, epochs=20, validation_split=0.2, verbose=0
+            )
             logger.info("Advanced AI model trained for network planning")
-            new_nodes = np.random.rand(10, 4)  # Simulating 10 new network nodes
+            # Simulating 10 new network nodes
+            new_nodes = np.random.rand(10, 4)
             deployment_plan = self.simulate_deployment(model, new_nodes)
-            logger.info("Deployment plan generated for %d nodes", len(new_nodes))
+            logger.info(
+                "Deployment plan generated for %d nodes", len(new_nodes)
+            )
             return model, history, deployment_plan
         except Exception as e:
             logger.error("Error in AI network planning: %s", str(e))
@@ -152,6 +158,7 @@ class NetworkPlanner:
             logger.error("Error simulating deployment: %s", str(e))
             raise
 
+
 class QuantumProcessor:
     """Handles quantum computing tasks and result visualization."""
 
@@ -166,7 +173,9 @@ class QuantumProcessor:
             self._create_quantum_circuit()
             self._run_quantum_simulation()
             counts = self._get_measurement_results()
-            probabilities, error_margins = self.calculate_probabilities_and_errors(counts)
+            probabilities, error_margins = (
+                self.calculate_probabilities_and_errors(counts)
+            )
             self.visualize_quantum_results(probabilities, error_margins)
         except Exception as e:
             logger.error("Error in quantum computing tasks: %s", str(e))
@@ -192,14 +201,21 @@ class QuantumProcessor:
         return counts
 
     @staticmethod
-    def calculate_probabilities_and_errors(counts):
+    def calculate_probabilities_and_errors(measurement_counts):
         """Calculate probabilities and error margins from measurement counts."""
-        total_shots = sum(counts.values())
-        probabilities = {k: v / total_shots for k, v in counts.items()}
-        error_margins = {
-            k: np.sqrt(v * (1 - v) / total_shots) for k, v in probabilities.items()
+        total_measurements = sum(measurement_counts.values())
+        probabilities = {
+            outcome: count / total_measurements
+            for outcome, count in measurement_counts.items()
         }
-        return probabilities, error_margins
+        error_margins = {
+            outcome: np.sqrt(prob * (1 - prob) / total_measurements)
+            for outcome, prob in probabilities.items()
+        }
+        return {
+            'probabilities': probabilities,
+            'error_margins': error_margins
+        }
 
     @staticmethod
     def visualize_quantum_results(probabilities: dict, error_margins: dict):
@@ -221,7 +237,10 @@ class QuantumProcessor:
             plt.tight_layout()
             plt.savefig("quantum_results.png", dpi=300)
             plt.close()
-            logger.info("Quantum computing visualization saved as 'quantum_results.png'")
+            logger.info(
+                "Quantum computing visualization saved as "
+                "'quantum_results.png'"
+            )
         except Exception as e:
             logger.error("Error visualizing quantum results: %s", str(e))
             raise
@@ -231,7 +250,8 @@ class QuantumProcessor:
         """Customize the plot with labels, title, and annotations."""
         ax.set_xlabel('Measurement Outcome', fontsize=12)
         ax.set_ylabel('Probability', fontsize=12)
-        ax.set_title('Quantum Circuit Results: Bell State Preparation', fontsize=14)
+        ax.set_title('Quantum Circuit Results: Bell State Preparation',
+                     fontsize=14)
         ax.tick_params(axis='both', which='major', labelsize=10)
         ax.set_ylim(0, 1)  # Set y-axis limit from 0 to 1 for probabilities
 
@@ -255,6 +275,7 @@ class QuantumProcessor:
             bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         )
 
+
 class SatelliteCommunication:
     def __init__(self):
         self.satellites = None
@@ -262,10 +283,12 @@ class SatelliteCommunication:
 
     def load_satellites(self):
         try:
-            self.satellites = load.tle_file(
-                'https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle'
+            url = (
+                'https://celestrak.org/NORAD/elements/gp.php?'
+                'GROUP=starlink&FORMAT=tle'
             )
-            logger.info(f"Loaded {len(self.satellites)} Starlink satellites")
+            self.satellites = load.tle_file(url)
+            logger.info("Loaded %d Starlink satellites", len(self.satellites))
         except Exception as e:
             logger.error("Error loading satellite data: %s", str(e))
             raise
@@ -312,6 +335,7 @@ class SatelliteCommunication:
         except Exception as e:
             logger.error("Error plotting ground track: %s", str(e))
             raise
+
 
 # Define main function
 def main():
@@ -381,9 +405,11 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logging.info("Application terminated by user.")
     except Exception as e:
-        logging.error("An unexpected error occurred: %s", str(e), exc_info=True)
+        logging.error("An unexpected error occurred: %s",
+                      str(e), exc_info=True)
     finally:
         logging.info("Application shutting down.")
+
 
 class EdgeComputing:
     def __init__(self):
@@ -397,7 +423,8 @@ class EdgeComputing:
                 data = request.json
                 if 'value' not in data:
                     return jsonify({'error': 'Missing value in request'}), 400
-                result = {'processed': data['value'] * 2}  # Simple processing: double the input
+                # Simple processing: double the input
+                result = {'processed': data['value'] * 2}
                 return jsonify(result)
             except Exception as e:
                 logger.error("Error processing data: %s", str(e))
@@ -410,6 +437,7 @@ class EdgeComputing:
         )
         return self.app
 
+
 class SpectrumManager:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -419,17 +447,25 @@ class SpectrumManager:
             self.logger.info("Running advanced spectrum management tasks...")
             frequencies, filtered_spectrum = self._generate_spectrum()
             peak_freq, bandwidth, spectral_efficiency = self._analyze_spectrum(
-                frequencies, filtered_spectrum)
-            self.logger.info(f"Peak frequency: {peak_freq:.2e} Hz")
-            self.logger.info(f"Estimated bandwidth: {bandwidth:.2e} Hz")
-            self.logger.info(f"Spectral efficiency: {spectral_efficiency:.2e}")
+                frequencies, filtered_spectrum
+            )
+            self.logger.info("Peak frequency: %.2e Hz", peak_freq)
+            self.logger.info("Estimated bandwidth: %.2e Hz", bandwidth)
+            self.logger.info("Spectral efficiency: %.2e", spectral_efficiency)
             distances, path_losses = self._simulate_terahertz_communication()
-            self._visualize_results(frequencies, filtered_spectrum, peak_freq,
-                                    distances, path_losses)
-            self.logger.info("Advanced spectrum management tasks completed. "
-                             "Analysis saved in 'advanced_spectrum_analysis.png'")
+            self._visualize_results(
+                frequencies,
+                filtered_spectrum,
+                peak_freq,
+                distances,
+                path_losses
+            )
+            self.logger.info(
+                "Advanced spectrum management tasks completed. "
+                "Analysis saved in 'advanced_spectrum_analysis.png'"
+            )
         except Exception as e:
-            self.logger.error(f"Error in spectrum management tasks: {str(e)}")
+            self.logger.error("Error in spectrum management tasks: %s", str(e))
             raise
 
     def _generate_spectrum(self):
@@ -437,23 +473,36 @@ class SpectrumManager:
         spectrum = np.abs(np.sin(frequencies/1e12) * np.exp(-frequencies/1e13))
         noise = np.random.normal(0, 0.05, spectrum.shape)
         noisy_spectrum = spectrum + noise
-        filtered_spectrum = savgol_filter(noisy_spectrum, window_length=51,
-                                          polyorder=3)
+        filtered_spectrum = savgol_filter(
+            noisy_spectrum,
+            window_length=51,
+            polyorder=3
+        )
         return frequencies, filtered_spectrum
 
     def _analyze_spectrum(self, frequencies, filtered_spectrum):
         peak_freq = frequencies[np.argmax(filtered_spectrum)]
-        bandwidth = (np.sum(filtered_spectrum > 0.5 * np.max(filtered_spectrum))
-                     * (frequencies[1] - frequencies[0]))
-        spectral_efficiency = (np.trapz(filtered_spectrum, frequencies)
-                               / (np.max(frequencies) - np.min(frequencies)))
+
+        threshold = 0.5 * np.max(filtered_spectrum)
+        bandwidth = np.sum(filtered_spectrum > threshold) * (
+            frequencies[1] - frequencies[0]
+        )
+
+        freq_range = np.max(frequencies) - np.min(frequencies)
+        spectral_efficiency = (
+            np.trapz(filtered_spectrum, frequencies) / freq_range
+        )
+
         return peak_freq, bandwidth, spectral_efficiency
 
-    def _terahertz_channel_model(self, distance, frequency, humidity, temperature):
+    def _terahertz_channel_model(
+            self, distance, frequency, humidity, temperature):
         c = 3e8  # Speed of light
         wavelength = c / frequency
         path_loss = 20 * np.log10(4 * np.pi * distance / wavelength)
-        water_vapor_loss = 0.05 * humidity * distance * (frequency / 1e12)**2
+        water_vapor_loss = (
+            0.05 * humidity * distance * (frequency / 1e12)**2
+        )
         temp_factor = 1 + 0.01 * (temperature - 20)  # 20°C as reference
         return (path_loss + water_vapor_loss) * temp_factor
 
@@ -463,21 +512,31 @@ class SpectrumManager:
         humidity = 50  # 50% relative humidity
         temperature = 25  # 25°C
         path_losses = [
-            self._terahertz_channel_model(d, terahertz_freq, humidity, temperature)
-            for d in distances
+            self._terahertz_channel_model(
+                d, terahertz_freq, humidity, temperature
+            ) for d in distances
         ]
         return distances, path_losses
 
-    def _visualize_results(self, frequencies, filtered_spectrum, peak_freq,
-                           distances, path_losses):
+    def _visualize_results(
+        self,
+        frequencies,
+        filtered_spectrum,
+        peak_freq,
+        distances,
+        path_losses
+    ):
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 14))
-        self._plot_frequency_spectrum(ax1, frequencies, filtered_spectrum, peak_freq)
+        self._plot_frequency_spectrum(
+            ax1, frequencies, filtered_spectrum, peak_freq
+        )
         self._plot_path_loss(ax2, distances, path_losses)
         plt.tight_layout()
         plt.savefig("advanced_spectrum_analysis.png", dpi=300)
         plt.close()
 
-    def _plot_frequency_spectrum(self, ax, frequencies, filtered_spectrum, peak_freq):
+    def _plot_frequency_spectrum(self, ax, frequencies, filtered_spectrum,
+                                 peak_freq):
         ax.semilogx(frequencies, filtered_spectrum)
         ax.set_title("Advanced Frequency Spectrum Analysis")
         ax.set_xlabel("Frequency (Hz)")
@@ -529,6 +588,7 @@ class Cybersecurity:
     def decrypt_message(self, encrypted_message):
         return self.fernet.decrypt(encrypted_message)
 
+
 class DataProcessor:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -545,22 +605,24 @@ class DataProcessor:
         stats = data['value'].describe()
         self.logger.info("\nValue statistics:\n%s", stats)
         self._visualize_time_series(data)
-        self.logger.info("Data processing and analysis tasks completed. "
-                         "Results saved in 'time_series_analysis.png'")
+        self.logger.info(
+            "Data processing and analysis tasks completed. "
+            "Results saved in 'time_series_analysis.png'"
+        )
 
     def _visualize_time_series(self, data):
         data.set_index('date', inplace=True)
         rolling_mean = data['value'].rolling(window=30).mean()
         plt.figure(figsize=(12, 6))
         plt.plot(data.index, data['value'], label='Original')
-        plt.plot(rolling_mean.index, rolling_mean, label='30-day Moving Average')
+        plt.plot(
+            rolling_mean.index,
+            rolling_mean,
+            label='30-day Moving Average'
+        )
         plt.title('Time Series Analysis')
         plt.xlabel('Date')
         plt.ylabel('Value')
         plt.legend()
         plt.savefig('time_series_analysis.png')
         plt.close()
-
-# Other functions and classes...
-
-# This block has been moved to the top-level execution block
