@@ -6,7 +6,6 @@ from typing import List, Tuple
 import pytest
 from pytest_mock import MockerFixture
 
-
 # Local imports
 from main import (
     main,

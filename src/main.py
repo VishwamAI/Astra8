@@ -23,8 +23,6 @@ from qiskit import Aer, QuantumCircuit, execute
 from scipy.signal import savgol_filter
 from skyfield.api import load, wgs84
 
-
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -60,7 +58,9 @@ class NetworkPlanner:
     def create_network_graph(self) -> nx.Graph:
         try:
             self.graph.add_nodes_from(range(1, 11))  # Add 10 nodes
-            self.graph.add_edges_from([(1, 2), (1, 3), (2, 4), (3, 5), (4, 6), (5, 7), (6, 8), (7, 9), (8, 10), (9, 10)])
+            edges = [(1, 2), (1, 3), (2, 4), (3, 5), (4, 6), (5, 7),
+                     (6, 8), (7, 9), (8, 10), (9, 10)]
+            self.graph.add_edges_from(edges)
             logger.info("Network graph created successfully")
             return self.graph
         except Exception as e:
@@ -88,38 +88,16 @@ class NetworkPlanner:
         try:
             logger.info("Running advanced AI-driven network planning...")
 
-            # Enhanced model for self-optimizing infrastructure
-            model = tf.keras.Sequential([
-                tf.keras.layers.Dense(128, activation='relu', input_shape=(4,)),
-                tf.keras.layers.Dense(64, activation='relu'),
-                tf.keras.layers.Dense(32, activation='relu'),
-                tf.keras.layers.Dense(3, activation='softmax')
-            ])
-            model.compile(
-                optimizer='adam',
-                loss='categorical_crossentropy',
-                metrics=['accuracy']
-            )
+            model = self._create_model()
+            X = self._generate_input_data(nodes, connections)
+            y = self._generate_output_data(len(nodes))
 
-            # Generate more complex dummy data for demonstration
-            X = np.array([
-                [n, c, np.random.rand(), np.random.rand()]
-                for n, c in zip(nodes, connections)
-            ])
-            y = tf.keras.utils.to_categorical(
-                np.random.randint(0, 3, size=(len(nodes),)),
-                num_classes=3
-            )
-
-            # Train the model
             history = model.fit(X, y, epochs=20, validation_split=0.2, verbose=0)
+            logger.info("Advanced AI model trained for network planning")
 
-            logger.info("Advanced AI model trained for network planning and self-optimization")
-
-            # Simulating automated deployment
             new_nodes = np.random.rand(10, 4)  # Simulating 10 new network nodes
             deployment_plan = self.simulate_deployment(model, new_nodes)
-            logger.info(f"Automated deployment plan generated for {len(new_nodes)} new nodes")
+            logger.info(f"Deployment plan generated for {len(new_nodes)} nodes")
 
             return model, history, deployment_plan
         except Exception as e:
@@ -127,7 +105,33 @@ class NetworkPlanner:
             raise
 
     @staticmethod
-    def simulate_deployment(model: tf.keras.Model, new_data: np.ndarray) -> np.ndarray:
+    def _create_model() -> tf.keras.Model:
+        model = tf.keras.Sequential([
+            tf.keras.layers.Dense(128, activation='relu', input_shape=(4,)),
+            tf.keras.layers.Dense(64, activation='relu'),
+            tf.keras.layers.Dense(32, activation='relu'),
+            tf.keras.layers.Dense(3, activation='softmax')
+        ])
+        model.compile(optimizer='adam', loss='categorical_crossentropy',
+                      metrics=['accuracy'])
+        return model
+
+    @staticmethod
+    def _generate_input_data(nodes: List[int],
+                             connections: List[int]) -> np.ndarray:
+        return np.array([[n, c, np.random.rand(), np.random.rand()]
+                         for n, c in zip(nodes, connections)])
+
+    @staticmethod
+    def _generate_output_data(num_nodes: int) -> np.ndarray:
+        return tf.keras.utils.to_categorical(
+            np.random.randint(0, 3, size=(num_nodes,)),
+            num_classes=3
+        )
+
+    @staticmethod
+    def simulate_deployment(model: tf.keras.Model,
+                            new_data: np.ndarray) -> np.ndarray:
         try:
             predictions = model.predict(new_data)
             return np.argmax(predictions, axis=1)
