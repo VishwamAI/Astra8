@@ -3,6 +3,7 @@
 
 # Import necessary libraries
 import logging
+import os
 import sys
 import time
 from datetime import timedelta
@@ -23,7 +24,10 @@ from scipy.signal import savgol_filter
 from skyfield.api import load, wgs84
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 # Auto-update function
@@ -33,17 +37,19 @@ def auto_update():
         origin = repo.remotes.origin
         origin.pull('7G_8G_development')
         current_commit = repo.head.commit
-        if current_commit != repo.commit('origin/7G_8G_development'):
+        origin_commit = repo.commit('origin/7G_8G_development')
+
+        if current_commit != origin_commit:
             logging.info("Updates found. Restarting application...")
             os.execv(sys.executable, ['python'] + sys.argv)
         else:
             logging.info("No updates available.")
     except git.GitCommandError as e:
-        logging.error(f"Git command error during auto-update: {str(e)}")
+        logging.error("Git command error during auto-update: %s", str(e))
     except git.InvalidGitRepositoryError:
         logging.error("Invalid Git repository. Auto-update failed.")
     except Exception as e:
-        logging.error(f"Unexpected error during auto-update: {str(e)}")
+        logging.error("Unexpected error during auto-update: %s", str(e))
 
 class NetworkPlanner:
     def __init__(self):
@@ -72,7 +78,11 @@ class NetworkPlanner:
             logger.error(f"Error simulating network: {str(e)}")
             raise
 
-    def ai_network_planning(self, nodes: List[int], connections: List[int]) -> Tuple[tf.keras.Model, tf.keras.callbacks.History, np.ndarray]:
+    def ai_network_planning(
+        self,
+        nodes: List[int],
+        connections: List[int]
+    ) -> Tuple[tf.keras.Model, tf.keras.callbacks.History, np.ndarray]:
         try:
             logger.info("Running advanced AI-driven network planning...")
 
@@ -83,11 +93,21 @@ class NetworkPlanner:
                 tf.keras.layers.Dense(32, activation='relu'),
                 tf.keras.layers.Dense(3, activation='softmax')
             ])
-            model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+            model.compile(
+                optimizer='adam',
+                loss='categorical_crossentropy',
+                metrics=['accuracy']
+            )
 
             # Generate more complex dummy data for demonstration
-            X = np.array([[n, c, np.random.rand(), np.random.rand()] for n, c in zip(nodes, connections)])
-            y = tf.keras.utils.to_categorical(np.random.randint(0, 3, size=(len(nodes),)), num_classes=3)
+            X = np.array([
+                [n, c, np.random.rand(), np.random.rand()]
+                for n, c in zip(nodes, connections)
+            ])
+            y = tf.keras.utils.to_categorical(
+                np.random.randint(0, 3, size=(len(nodes),)),
+                num_classes=3
+            )
 
             # Train the model
             history = model.fit(X, y, epochs=20, validation_split=0.2, verbose=0)
@@ -163,8 +183,14 @@ class QuantumProcessor:
         try:
             fig, ax = plt.subplots(figsize=(10, 6))
             bar_colors = ['#1f77b4', '#ff7f0e']  # Distinct colors for different outcomes
-            bars = ax.bar(probabilities.keys(), probabilities.values(), yerr=error_margins.values(),
-                          capsize=5, color=bar_colors, alpha=0.8)
+            bars = ax.bar(
+                probabilities.keys(),
+                probabilities.values(),
+                yerr=error_margins.values(),
+                capsize=5,
+                color=bar_colors,
+                alpha=0.8
+            )
 
             # Customize the plot
             ax.set_xlabel('Measurement Outcome', fontsize=12)
@@ -176,16 +202,26 @@ class QuantumProcessor:
             # Add value labels on top of each bar
             for bar in bars:
                 height = bar.get_height()
-                ax.text(bar.get_x() + bar.get_width()/2., height,
-                        f'{height:.2f}', ha='center', va='bottom')
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2.,
+                    height,
+                    f'{height:.2f}',
+                    ha='center',
+                    va='bottom'
+                )
 
             # Customize grid
             ax.grid(axis='y', linestyle='--', alpha=0.7)
 
             # Add a legend explaining the circuit
-            ax.text(0.95, 0.95, 'Circuit: H(q0) -> CNOT(q0, q1)', transform=ax.transAxes,
-                    verticalalignment='top', horizontalalignment='right',
-                    bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+            ax.text(
+                0.95, 0.95,
+                'Circuit: H(q0) -> CNOT(q0, q1)',
+                transform=ax.transAxes,
+                verticalalignment='top',
+                horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+            )
 
             plt.tight_layout()
             plt.savefig("quantum_results.png", dpi=300)
@@ -398,18 +434,27 @@ class SpectrumManager:
         ax1.set_xlabel("Frequency (Hz)")
         ax1.set_ylabel("Magnitude")
         ax1.grid(True)
-        ax1.annotate(f'Peak: {peak_freq:.2e} Hz', xy=(peak_freq, filtered_spectrum[np.argmax(filtered_spectrum)]),
-                     xytext=(0.7, 0.95), textcoords='axes fraction',
-                     arrowprops=dict(facecolor='black', shrink=0.05))
+        ax1.annotate(
+            f'Peak: {peak_freq:.2e} Hz',
+            xy=(peak_freq, filtered_spectrum[np.argmax(filtered_spectrum)]),
+            xytext=(0.7, 0.95),
+            textcoords='axes fraction',
+            arrowprops=dict(facecolor='black', shrink=0.05)
+        )
 
         ax2.plot(distances, path_losses)
-        ax2.set_title(f"Terahertz Communication Path Loss\n(Humidity: 50%, Temperature: 25°C)")
+        ax2.set_title("Terahertz Communication Path Loss\n"
+                      "(Humidity: 50%, Temperature: 25°C)")
         ax2.set_xlabel("Distance (m)")
         ax2.set_ylabel("Path Loss (dB)")
         ax2.grid(True)
-        ax2.annotate(f'Loss at 50m: {path_losses[249]:.2f} dB', xy=(50, path_losses[249]),
-                     xytext=(0.7, 0.95), textcoords='axes fraction',
-                     arrowprops=dict(facecolor='black', shrink=0.05))
+        ax2.annotate(
+            f'Loss at 50m: {path_losses[249]:.2f} dB',
+            xy=(50, path_losses[249]),
+            xytext=(0.7, 0.95),
+            textcoords='axes fraction',
+            arrowprops=dict(facecolor='black', shrink=0.05)
+        )
 
         plt.tight_layout()
         plt.savefig("advanced_spectrum_analysis.png", dpi=300)
