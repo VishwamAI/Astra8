@@ -22,12 +22,25 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'
+        python-version: '3.8'
 
-    - name: Install dependencies
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++ cmake ninja-build
+
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Install and build ns-3
+      run: |
+        git clone https://gitlab.com/nsnam/ns-3-dev.git
+        cd ns-3-dev
+        ./ns3 configure --enable-examples --enable-tests
+        ./ns3 build
+        cd ..
 
     - name: Run linting
       run: |
