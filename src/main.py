@@ -23,6 +23,8 @@ from qiskit import Aer, QuantumCircuit, execute
 from scipy.signal import savgol_filter
 from skyfield.api import load, wgs84
 
+
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -400,7 +402,6 @@ class SpectrumManager:
         spectrum = np.abs(np.sin(frequencies/1e12) * np.exp(-frequencies/1e13))
         noise = np.random.normal(0, 0.05, spectrum.shape)
         noisy_spectrum = spectrum + noise
-        from scipy.signal import savgol_filter
         filtered_spectrum = savgol_filter(noisy_spectrum, window_length=51, polyorder=3)
         return frequencies, filtered_spectrum
 
@@ -426,7 +427,8 @@ class SpectrumManager:
         path_losses = [self._terahertz_channel_model(d, terahertz_freq, humidity, temperature) for d in distances]
         return distances, path_losses
 
-    def _visualize_results(self, frequencies, filtered_spectrum, peak_freq, distances, path_losses):
+    def _visualize_results(self, frequencies, filtered_spectrum, peak_freq,
+                           distances, path_losses):
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 14))
 
         ax1.semilogx(frequencies, filtered_spectrum)
@@ -459,6 +461,7 @@ class SpectrumManager:
         plt.tight_layout()
         plt.savefig("advanced_spectrum_analysis.png", dpi=300)
         plt.close()
+
 
 class Cybersecurity:
     def __init__(self):
