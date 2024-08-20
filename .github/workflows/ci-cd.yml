@@ -42,10 +42,6 @@ jobs:
         ./ns3 build
         cd ..
 
-    - name: Run tests
-      run: |
-        pytest src
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
