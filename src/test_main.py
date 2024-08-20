@@ -24,11 +24,7 @@ def test_main_typical_case(mocker: MockerFixture) -> None:
     mock_network_planner = MagicMock(spec=NetworkPlanner)
     mock_network_planner.create_network_graph.return_value = MagicMock()
     mock_network_planner.simulate_network.return_value = [1, 2, 4, 6, 8, 10]
-    mock_network_planner.ai_network_planning.return_value = (
-        Mock(),
-        Mock(),
-        Mock(),
-    )
+    mock_network_planner.ai_network_planning.return_value = (Mock(), Mock(), Mock())
 
     mock_quantum_processor = MagicMock(spec=QuantumProcessor)
     mock_satellite_comm = MagicMock(spec=SatelliteCommunication)

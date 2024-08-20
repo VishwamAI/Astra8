@@ -35,8 +35,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Auto-update function
+
 def auto_update():
+    """Perform auto-update of the application."""
     try:
         repo = git.Repo(search_parent_directories=True)
         origin = repo.remotes.origin
@@ -64,8 +65,8 @@ class NetworkPlanner:
         try:
             self.graph.add_nodes_from(range(1, 11))  # Add 10 nodes
             edges = [
-                (1, 2), (1, 3), (2, 4), (3, 5), (4, 6), (5, 7),
-                (6, 8), (7, 9), (8, 10), (9, 10)
+                (1, 2), (1, 3), (2, 4), (3, 5), (4, 6),
+                (5, 7), (6, 8), (7, 9), (8, 10), (9, 10)
             ]
             self.graph.add_edges_from(edges)
             logger.info("Network graph created successfully")
@@ -123,7 +124,10 @@ class NetworkPlanner:
         return model
 
     @staticmethod
-    def _generate_input_data(nodes: List[int], connections: List[int]) -> np.ndarray:
+    def _generate_input_data(
+        nodes: List[int],
+        connections: List[int]
+    ) -> np.ndarray:
         return np.array([
             [n, c, np.random.rand(), np.random.rand()]
             for n, c in zip(nodes, connections)
@@ -137,7 +141,10 @@ class NetworkPlanner:
         )
 
     @staticmethod
-    def simulate_deployment(model: tf.keras.Model, new_data: np.ndarray) -> np.ndarray:
+    def simulate_deployment(
+        model: tf.keras.Model,
+        new_data: np.ndarray
+    ) -> np.ndarray:
         try:
             predictions = model.predict(new_data)
             return np.argmax(predictions, axis=1)
@@ -162,7 +169,7 @@ class QuantumProcessor:
             probabilities, error_margins = self.calculate_probabilities_and_errors(counts)
             self.visualize_quantum_results(probabilities, error_margins)
         except Exception as e:
-            logger.error(f"Error in quantum computing tasks: {str(e)}")
+            logger.error("Error in quantum computing tasks: %s", str(e))
             raise
 
     def _create_quantum_circuit(self):
@@ -181,7 +188,7 @@ class QuantumProcessor:
     def _get_measurement_results(self):
         """Get and log the measurement results."""
         counts = self.result.get_counts(self.qc)
-        logger.info(f"Quantum circuit measurement results: {counts}")
+        logger.info("Quantum circuit measurement results: %s", counts)
         return counts
 
     @staticmethod
@@ -216,7 +223,7 @@ class QuantumProcessor:
             plt.close()
             logger.info("Quantum computing visualization saved as 'quantum_results.png'")
         except Exception as e:
-            logger.error(f"Error visualizing quantum results: {str(e)}")
+            logger.error("Error visualizing quantum results: %s", str(e))
             raise
 
     @staticmethod
@@ -255,19 +262,22 @@ class SatelliteCommunication:
 
     def load_satellites(self):
         try:
-            self.satellites = load.tle_file('https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle')
+            self.satellites = load.tle_file(
+                'https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle'
+            )
             logger.info(f"Loaded {len(self.satellites)} Starlink satellites")
         except Exception as e:
-            logger.error(f"Error loading satellite data: {str(e)}")
+            logger.error("Error loading satellite data: %s", str(e))
             raise
 
     def run_satellite_tasks(self):
         logger.info("Running satellite communication tasks...")
-
         self.load_satellites()
 
         if not self.satellites:
-            logger.warning("No satellites loaded. Exiting satellite communication tasks.")
+            logger.warning(
+                "No satellites loaded. Exiting satellite communication tasks."
+            )
             return
 
         satellite = self.satellites[0]
@@ -283,7 +293,12 @@ class SatelliteCommunication:
             subpoint = geocentric.subpoint()
 
             plt.figure(figsize=(15, 7))
-            plt.plot(subpoint.longitude.degrees, subpoint.latitude.degrees, 'b.', ms=2)
+            plt.plot(
+                subpoint.longitude.degrees,
+                subpoint.latitude.degrees,
+                'b.',
+                ms=2
+            )
             plt.title(f"{satellite.name} Ground Track")
             plt.xlabel('Longitude (degrees)')
             plt.ylabel('Latitude (degrees)')
@@ -291,9 +306,11 @@ class SatelliteCommunication:
             plt.savefig("satellite_ground_track.png")
             plt.close()
 
-            logger.info("Satellite ground track saved in 'satellite_ground_track.png'")
+            logger.info(
+                "Satellite ground track saved in 'satellite_ground_track.png'"
+            )
         except Exception as e:
-            logger.error(f"Error plotting ground track: {str(e)}")
+            logger.error("Error plotting ground track: %s", str(e))
             raise
 
 # Define main function
@@ -303,11 +320,11 @@ def main():
 
         # Network simulation and planning
         network_planner = NetworkPlanner()
-        G = network_planner.create_network_graph()
+        graph = network_planner.create_network_graph()
         network_planner.simulate_network()
 
-        nodes = list(G.nodes())
-        connections = [len(list(G.neighbors(n))) for n in G.nodes()]
+        nodes = list(graph.nodes())
+        connections = [len(list(graph.neighbors(n))) for n in graph.nodes()]
         network_planner.ai_network_planning(nodes, connections)
 
         # Quantum computing tasks
@@ -337,10 +354,11 @@ def main():
         logging.info("All tasks completed successfully")
 
     except Exception as e:
-        logging.error(f"An error occurred in the main function: {str(e)}")
+        logging.error("An error occurred in the main function: %s", str(e))
         raise
 
     return edge_app
+
 
 if __name__ == "__main__":
     try:
@@ -351,7 +369,8 @@ if __name__ == "__main__":
         main()
 
         logging.info("7G and 8G development tasks completed successfully.")
-        logging.info("Next steps: Integrate AI-driven optimization and terahertz communication modules.")
+        logging.info("Next steps: Integrate AI-driven optimization and "
+                     "terahertz communication modules.")
 
         # Schedule periodic update checks
         schedule.every(1).hour.do(auto_update)
@@ -362,7 +381,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logging.info("Application terminated by user.")
     except Exception as e:
-        logging.error(f"An unexpected error occurred: {str(e)}", exc_info=True)
+        logging.error("An unexpected error occurred: %s", str(e), exc_info=True)
     finally:
         logging.info("Application shutting down.")
 
@@ -381,11 +400,14 @@ class EdgeComputing:
                 result = {'processed': data['value'] * 2}  # Simple processing: double the input
                 return jsonify(result)
             except Exception as e:
-                logger.error(f"Error processing data: {str(e)}")
+                logger.error("Error processing data: %s", str(e))
                 return jsonify({'error': 'Internal server error'}), 500
 
     def setup_edge_server(self):
-        logger.info("Edge computing server is ready. Run it with app.run() in a separate process.")
+        logger.info(
+            "Edge computing server is ready. "
+            "Run it with app.run() in a separate process."
+        )
         return self.app
 
 class SpectrumManager:
@@ -395,35 +417,36 @@ class SpectrumManager:
     def run_spectrum_tasks(self):
         try:
             self.logger.info("Running advanced spectrum management tasks...")
-
             frequencies, filtered_spectrum = self._generate_spectrum()
-            peak_freq, bandwidth, spectral_efficiency = self._analyze_spectrum(frequencies, filtered_spectrum)
-
+            peak_freq, bandwidth, spectral_efficiency = self._analyze_spectrum(
+                frequencies, filtered_spectrum)
             self.logger.info(f"Peak frequency: {peak_freq:.2e} Hz")
             self.logger.info(f"Estimated bandwidth: {bandwidth:.2e} Hz")
             self.logger.info(f"Spectral efficiency: {spectral_efficiency:.2e}")
-
             distances, path_losses = self._simulate_terahertz_communication()
-
-            self._visualize_results(frequencies, filtered_spectrum, peak_freq, distances, path_losses)
-
-            self.logger.info("Advanced spectrum management tasks completed. Analysis saved in 'advanced_spectrum_analysis.png'")
+            self._visualize_results(frequencies, filtered_spectrum, peak_freq,
+                                    distances, path_losses)
+            self.logger.info("Advanced spectrum management tasks completed. "
+                             "Analysis saved in 'advanced_spectrum_analysis.png'")
         except Exception as e:
             self.logger.error(f"Error in spectrum management tasks: {str(e)}")
             raise
 
     def _generate_spectrum(self):
-        frequencies = np.logspace(9, 14, 5000)  # 1 GHz to 100 THz, increased resolution
+        frequencies = np.logspace(9, 14, 5000)  # 1 GHz to 100 THz
         spectrum = np.abs(np.sin(frequencies/1e12) * np.exp(-frequencies/1e13))
         noise = np.random.normal(0, 0.05, spectrum.shape)
         noisy_spectrum = spectrum + noise
-        filtered_spectrum = savgol_filter(noisy_spectrum, window_length=51, polyorder=3)
+        filtered_spectrum = savgol_filter(noisy_spectrum, window_length=51,
+                                          polyorder=3)
         return frequencies, filtered_spectrum
 
     def _analyze_spectrum(self, frequencies, filtered_spectrum):
         peak_freq = frequencies[np.argmax(filtered_spectrum)]
-        bandwidth = np.sum(filtered_spectrum > 0.5 * np.max(filtered_spectrum)) * (frequencies[1] - frequencies[0])
-        spectral_efficiency = np.trapz(filtered_spectrum, frequencies) / (np.max(frequencies) - np.min(frequencies))
+        bandwidth = (np.sum(filtered_spectrum > 0.5 * np.max(filtered_spectrum))
+                     * (frequencies[1] - frequencies[0]))
+        spectral_efficiency = (np.trapz(filtered_spectrum, frequencies)
+                               / (np.max(frequencies) - np.min(frequencies)))
         return peak_freq, bandwidth, spectral_efficiency
 
     def _terahertz_channel_model(self, distance, frequency, humidity, temperature):
@@ -435,21 +458,21 @@ class SpectrumManager:
         return (path_loss + water_vapor_loss) * temp_factor
 
     def _simulate_terahertz_communication(self):
-        distances = np.linspace(1, 100, 500)  # 1 to 100 meters, increased resolution
+        distances = np.linspace(1, 100, 500)  # 1 to 100 meters
         terahertz_freq = 1e12  # 1 THz
         humidity = 50  # 50% relative humidity
         temperature = 25  # 25°C
-        path_losses = [self._terahertz_channel_model(d, terahertz_freq, humidity, temperature) for d in distances]
+        path_losses = [
+            self._terahertz_channel_model(d, terahertz_freq, humidity, temperature)
+            for d in distances
+        ]
         return distances, path_losses
 
-    def _visualize_results(
-        self, frequencies, filtered_spectrum, peak_freq, distances, path_losses
-    ):
+    def _visualize_results(self, frequencies, filtered_spectrum, peak_freq,
+                           distances, path_losses):
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 14))
-
         self._plot_frequency_spectrum(ax1, frequencies, filtered_spectrum, peak_freq)
         self._plot_path_loss(ax2, distances, path_losses)
-
         plt.tight_layout()
         plt.savefig("advanced_spectrum_analysis.png", dpi=300)
         plt.close()
@@ -495,9 +518,9 @@ class Cybersecurity:
         logger.info("Running cybersecurity tasks...")
         message = b"Secure communication is crucial for 7G and 8G networks."
         encrypted = self.encrypt_message(message)
-        logger.info(f"Encrypted message: {encrypted}")
+        logger.info("Encrypted message: %s", encrypted)
         decrypted = self.decrypt_message(encrypted)
-        logger.info(f"Decrypted message: {decrypted.decode()}")
+        logger.info("Decrypted message: %s", decrypted.decode())
         logger.info("Cybersecurity tasks completed.")
 
     def encrypt_message(self, message):
@@ -517,12 +540,13 @@ class DataProcessor:
             'date': dates,
             'value': np.random.randn(len(dates)).cumsum()
         })
-        self.logger.info(f"Data shape: {data.shape}")
-        self.logger.info(f"\nFirst few rows:\n{data.head()}")
+        self.logger.info("Data shape: %s", data.shape)
+        self.logger.info("\nFirst few rows:\n%s", data.head())
         stats = data['value'].describe()
-        self.logger.info(f"\nValue statistics:\n{stats}")
+        self.logger.info("\nValue statistics:\n%s", stats)
         self._visualize_time_series(data)
-        self.logger.info("Data processing and analysis tasks completed. Results saved in 'time_series_analysis.png'")
+        self.logger.info("Data processing and analysis tasks completed. "
+                         "Results saved in 'time_series_analysis.png'")
 
     def _visualize_time_series(self, data):
         data.set_index('date', inplace=True)
@@ -536,8 +560,6 @@ class DataProcessor:
         plt.legend()
         plt.savefig('time_series_analysis.png')
         plt.close()
-
-
 
 # Other functions and classes...
 
