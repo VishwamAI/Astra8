@@ -1,7 +1,7 @@
 # Create a basic project structure for Astra8
 # Implement advanced features for 7G and 8G development
 
-# Import necessary libraries
+# Standard library imports
 import logging
 import os
 import sys
@@ -92,12 +92,16 @@ class NetworkPlanner:
             X = self._generate_input_data(nodes, connections)
             y = self._generate_output_data(len(nodes))
 
-            history = model.fit(X, y, epochs=20, validation_split=0.2, verbose=0)
+            history = model.fit(
+                X, y, epochs=20, validation_split=0.2, verbose=0
+            )
             logger.info("Advanced AI model trained for network planning")
 
             new_nodes = np.random.rand(10, 4)  # Simulating 10 new network nodes
             deployment_plan = self.simulate_deployment(model, new_nodes)
-            logger.info(f"Deployment plan generated for {len(new_nodes)} nodes")
+            logger.info(
+                f"Deployment plan generated for {len(new_nodes)} nodes"
+            )
 
             return model, history, deployment_plan
         except Exception as e:
@@ -188,7 +192,7 @@ class QuantumProcessor:
     def visualize_quantum_results(probabilities: dict, error_margins: dict):
         try:
             fig, ax = plt.subplots(figsize=(10, 6))
-            bar_colors = ['#1f77b4', '#ff7f0e']  # Distinct colors for different outcomes
+            bar_colors = ['#1f77b4', '#ff7f0e']  # Distinct colors for outcomes
             bars = ax.bar(
                 probabilities.keys(),
                 probabilities.values(),
@@ -216,10 +220,8 @@ class QuantumProcessor:
                     va='bottom'
                 )
 
-            # Customize grid
+            # Customize grid and add legend
             ax.grid(axis='y', linestyle='--', alpha=0.7)
-
-            # Add a legend explaining the circuit
             ax.text(
                 0.95, 0.95,
                 'Circuit: H(q0) -> CNOT(q0, q1)',
@@ -431,16 +433,25 @@ class SpectrumManager:
         path_losses = [self._terahertz_channel_model(d, terahertz_freq, humidity, temperature) for d in distances]
         return distances, path_losses
 
-    def _visualize_results(self, frequencies, filtered_spectrum, peak_freq,
-                           distances, path_losses):
+    def _visualize_results(
+        self, frequencies, filtered_spectrum, peak_freq, distances, path_losses
+    ):
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 14))
 
-        ax1.semilogx(frequencies, filtered_spectrum)
-        ax1.set_title("Advanced Frequency Spectrum Analysis")
-        ax1.set_xlabel("Frequency (Hz)")
-        ax1.set_ylabel("Magnitude")
-        ax1.grid(True)
-        ax1.annotate(
+        self._plot_frequency_spectrum(ax1, frequencies, filtered_spectrum, peak_freq)
+        self._plot_path_loss(ax2, distances, path_losses)
+
+        plt.tight_layout()
+        plt.savefig("advanced_spectrum_analysis.png", dpi=300)
+        plt.close()
+
+    def _plot_frequency_spectrum(self, ax, frequencies, filtered_spectrum, peak_freq):
+        ax.semilogx(frequencies, filtered_spectrum)
+        ax.set_title("Advanced Frequency Spectrum Analysis")
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_ylabel("Magnitude")
+        ax.grid(True)
+        ax.annotate(
             f'Peak: {peak_freq:.2e} Hz',
             xy=(peak_freq, filtered_spectrum[np.argmax(filtered_spectrum)]),
             xytext=(0.7, 0.95),
@@ -448,23 +459,22 @@ class SpectrumManager:
             arrowprops=dict(facecolor='black', shrink=0.05)
         )
 
-        ax2.plot(distances, path_losses)
-        ax2.set_title("Terahertz Communication Path Loss\n"
-                      "(Humidity: 50%, Temperature: 25°C)")
-        ax2.set_xlabel("Distance (m)")
-        ax2.set_ylabel("Path Loss (dB)")
-        ax2.grid(True)
-        ax2.annotate(
+    def _plot_path_loss(self, ax, distances, path_losses):
+        ax.plot(distances, path_losses)
+        ax.set_title(
+            "Terahertz Communication Path Loss\n"
+            "(Humidity: 50%, Temperature: 25°C)"
+        )
+        ax.set_xlabel("Distance (m)")
+        ax.set_ylabel("Path Loss (dB)")
+        ax.grid(True)
+        ax.annotate(
             f'Loss at 50m: {path_losses[249]:.2f} dB',
             xy=(50, path_losses[249]),
             xytext=(0.7, 0.95),
             textcoords='axes fraction',
             arrowprops=dict(facecolor='black', shrink=0.05)
         )
-
-        plt.tight_layout()
-        plt.savefig("advanced_spectrum_analysis.png", dpi=300)
-        plt.close()
 
 
 class Cybersecurity:
