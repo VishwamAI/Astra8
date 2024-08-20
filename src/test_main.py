@@ -1,3 +1,5 @@
+"""Unit tests for the main module of the Astra8 project."""
+
 # Standard library imports
 from unittest.mock import Mock, MagicMock
 
@@ -12,10 +14,8 @@ from main import (
     QuantumProcessor,
     SatelliteCommunication,
     SpectrumManager,
-    EdgeComputing
+    EdgeComputing,
 )
-
-
 
 
 def test_main_typical_case(mocker: MockerFixture) -> None:
@@ -25,7 +25,9 @@ def test_main_typical_case(mocker: MockerFixture) -> None:
     mock_network_planner.create_network_graph.return_value = MagicMock()
     mock_network_planner.simulate_network.return_value = [1, 2, 4, 6, 8, 10]
     mock_network_planner.ai_network_planning.return_value = (
-        Mock(), Mock(), Mock()
+        Mock(),
+        Mock(),
+        Mock(),
     )
 
     mock_quantum_processor = MagicMock(spec=QuantumProcessor)
@@ -34,11 +36,11 @@ def test_main_typical_case(mocker: MockerFixture) -> None:
     mock_edge_computing = MagicMock(spec=EdgeComputing)
 
     # Patch the main module with mocked classes
-    mocker.patch('main.NetworkPlanner', return_value=mock_network_planner)
-    mocker.patch('main.QuantumProcessor', return_value=mock_quantum_processor)
-    mocker.patch('main.SatelliteCommunication', return_value=mock_satellite_comm)
-    mocker.patch('main.SpectrumManager', return_value=mock_spectrum_manager)
-    mocker.patch('main.EdgeComputing', return_value=mock_edge_computing)
+    mocker.patch("main.NetworkPlanner", return_value=mock_network_planner)
+    mocker.patch("main.QuantumProcessor", return_value=mock_quantum_processor)
+    mocker.patch("main.SatelliteCommunication", return_value=mock_satellite_comm)
+    mocker.patch("main.SpectrumManager", return_value=mock_spectrum_manager)
+    mocker.patch("main.EdgeComputing", return_value=mock_edge_computing)
 
     # Call the main function
     main()
@@ -57,8 +59,10 @@ def test_main_error_handling(mocker: MockerFixture) -> None:
     """Test the main function's error handling capabilities."""
     # Mock NetworkPlanner to raise an exception
     mock_network_planner = MagicMock(spec=NetworkPlanner)
-    mock_network_planner.create_network_graph.side_effect = Exception("Network creation failed")
-    mocker.patch('main.NetworkPlanner', return_value=mock_network_planner)
+    mock_network_planner.create_network_graph.side_effect = Exception(
+        "Network creation failed"
+    )
+    mocker.patch("main.NetworkPlanner", return_value=mock_network_planner)
 
     # Call the main function and check if it handles the exception
     with pytest.raises(Exception) as exc_info:
@@ -81,11 +85,11 @@ def test_main_edge_case(mocker: MockerFixture) -> None:
     mock_edge_computing = MagicMock(spec=EdgeComputing)
 
     # Patch the main module with mocked classes
-    mocker.patch('main.NetworkPlanner', return_value=mock_network_planner)
-    mocker.patch('main.QuantumProcessor', return_value=mock_quantum_processor)
-    mocker.patch('main.SatelliteCommunication', return_value=mock_satellite_comm)
-    mocker.patch('main.SpectrumManager', return_value=mock_spectrum_manager)
-    mocker.patch('main.EdgeComputing', return_value=mock_edge_computing)
+    mocker.patch("main.NetworkPlanner", return_value=mock_network_planner)
+    mocker.patch("main.QuantumProcessor", return_value=mock_quantum_processor)
+    mocker.patch("main.SatelliteCommunication", return_value=mock_satellite_comm)
+    mocker.patch("main.SpectrumManager", return_value=mock_spectrum_manager)
+    mocker.patch("main.EdgeComputing", return_value=mock_edge_computing)
 
     # Call the main function
     main()

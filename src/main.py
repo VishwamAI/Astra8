@@ -1,5 +1,10 @@
-# Create a basic project structure for Astra8
-# Implement advanced features for 7G and 8G development
+"""
+Astra8: Advanced 7G and 8G Network Development Project
+
+This module implements advanced features for 7G and 8G network development,
+including network simulation, AI-driven planning, quantum computing tasks,
+satellite communication, spectrum management, and data processing.
+"""
 
 # Standard library imports
 import logging
@@ -58,26 +63,28 @@ class NetworkPlanner:
     def create_network_graph(self) -> nx.Graph:
         try:
             self.graph.add_nodes_from(range(1, 11))  # Add 10 nodes
-            edges = [(1, 2), (1, 3), (2, 4), (3, 5), (4, 6), (5, 7),
-                     (6, 8), (7, 9), (8, 10), (9, 10)]
+            edges = [
+                (1, 2), (1, 3), (2, 4), (3, 5), (4, 6), (5, 7),
+                (6, 8), (7, 9), (8, 10), (9, 10)
+            ]
             self.graph.add_edges_from(edges)
             logger.info("Network graph created successfully")
             return self.graph
         except Exception as e:
-            logger.error(f"Error creating network graph: {str(e)}")
+            logger.error("Error creating network graph: %s", str(e))
             raise
 
     def simulate_network(self) -> List[int]:
         try:
             logger.info("Running network simulation...")
             shortest_path = nx.shortest_path(self.graph, 1, 10)
-            logger.info(f"Shortest path from node 1 to 10: {shortest_path}")
+            logger.info("Shortest path from node 1 to 10: %s", shortest_path)
             return shortest_path
         except nx.NetworkXNoPath:
             logger.error("No path exists between nodes 1 and 10")
             return []
         except Exception as e:
-            logger.error(f"Error simulating network: {str(e)}")
+            logger.error("Error simulating network: %s", str(e))
             raise
 
     def ai_network_planning(
@@ -87,25 +94,17 @@ class NetworkPlanner:
     ) -> Tuple[tf.keras.Model, tf.keras.callbacks.History, np.ndarray]:
         try:
             logger.info("Running advanced AI-driven network planning...")
-
             model = self._create_model()
             X = self._generate_input_data(nodes, connections)
             y = self._generate_output_data(len(nodes))
-
-            history = model.fit(
-                X, y, epochs=20, validation_split=0.2, verbose=0
-            )
+            history = model.fit(X, y, epochs=20, validation_split=0.2, verbose=0)
             logger.info("Advanced AI model trained for network planning")
-
             new_nodes = np.random.rand(10, 4)  # Simulating 10 new network nodes
             deployment_plan = self.simulate_deployment(model, new_nodes)
-            logger.info(
-                f"Deployment plan generated for {len(new_nodes)} nodes"
-            )
-
+            logger.info("Deployment plan generated for %d nodes", len(new_nodes))
             return model, history, deployment_plan
         except Exception as e:
-            logger.error(f"Error in AI network planning: {str(e)}")
+            logger.error("Error in AI network planning: %s", str(e))
             raise
 
     @staticmethod
@@ -116,15 +115,19 @@ class NetworkPlanner:
             tf.keras.layers.Dense(32, activation='relu'),
             tf.keras.layers.Dense(3, activation='softmax')
         ])
-        model.compile(optimizer='adam', loss='categorical_crossentropy',
-                      metrics=['accuracy'])
+        model.compile(
+            optimizer='adam',
+            loss='categorical_crossentropy',
+            metrics=['accuracy']
+        )
         return model
 
     @staticmethod
-    def _generate_input_data(nodes: List[int],
-                             connections: List[int]) -> np.ndarray:
-        return np.array([[n, c, np.random.rand(), np.random.rand()]
-                         for n, c in zip(nodes, connections)])
+    def _generate_input_data(nodes: List[int], connections: List[int]) -> np.ndarray:
+        return np.array([
+            [n, c, np.random.rand(), np.random.rand()]
+            for n, c in zip(nodes, connections)
+        ])
 
     @staticmethod
     def _generate_output_data(num_nodes: int) -> np.ndarray:
@@ -134,62 +137,66 @@ class NetworkPlanner:
         )
 
     @staticmethod
-    def simulate_deployment(model: tf.keras.Model,
-                            new_data: np.ndarray) -> np.ndarray:
+    def simulate_deployment(model: tf.keras.Model, new_data: np.ndarray) -> np.ndarray:
         try:
             predictions = model.predict(new_data)
             return np.argmax(predictions, axis=1)
         except Exception as e:
-            logger.error(f"Error simulating deployment: {str(e)}")
+            logger.error("Error simulating deployment: %s", str(e))
             raise
 
 class QuantumProcessor:
+    """Handles quantum computing tasks and result visualization."""
+
     def __init__(self):
         self.qc = None
         self.result = None
 
     def run_quantum_tasks(self):
+        """Execute quantum tasks, including circuit creation and simulation."""
         try:
             logger.info("Running quantum computing tasks...")
-
-            # Create a quantum circuit with 2 qubits
-            self.qc = QuantumCircuit(2, 2)
-
-            # Apply gates
-            self.qc.h(0)  # Hadamard gate on qubit 0
-            self.qc.cx(0, 1)  # CNOT gate with control qubit 0 and target qubit 1
-
-            # Measure qubits
-            self.qc.measure([0, 1], [0, 1])
-
-            # Run the quantum circuit on a simulator
-            backend = Aer.get_backend('qasm_simulator')
-            job = execute(self.qc, backend, shots=1000)
-            self.result = job.result()
-
-            # Get the measurement results
-            counts = self.result.get_counts(self.qc)
-            logger.info(f"Quantum circuit measurement results: {counts}")
-
-            # Calculate probabilities and error margins
+            self._create_quantum_circuit()
+            self._run_quantum_simulation()
+            counts = self._get_measurement_results()
             probabilities, error_margins = self.calculate_probabilities_and_errors(counts)
-
-            # Visualize the results with improvements
             self.visualize_quantum_results(probabilities, error_margins)
-
         except Exception as e:
             logger.error(f"Error in quantum computing tasks: {str(e)}")
             raise
 
+    def _create_quantum_circuit(self):
+        """Create a quantum circuit with 2 qubits."""
+        self.qc = QuantumCircuit(2, 2)
+        self.qc.h(0)  # Hadamard gate on qubit 0
+        self.qc.cx(0, 1)  # CNOT gate with control qubit 0 and target qubit 1
+        self.qc.measure([0, 1], [0, 1])
+
+    def _run_quantum_simulation(self):
+        """Run the quantum circuit on a simulator."""
+        backend = Aer.get_backend('qasm_simulator')
+        job = execute(self.qc, backend, shots=1000)
+        self.result = job.result()
+
+    def _get_measurement_results(self):
+        """Get and log the measurement results."""
+        counts = self.result.get_counts(self.qc)
+        logger.info(f"Quantum circuit measurement results: {counts}")
+        return counts
+
     @staticmethod
     def calculate_probabilities_and_errors(counts):
+        """Calculate probabilities and error margins from measurement counts."""
         total_shots = sum(counts.values())
         probabilities = {k: v / total_shots for k, v in counts.items()}
-        error_margins = {k: np.sqrt(v * (1 - v) / total_shots) for k, v in probabilities.items()}
+        error_margins = {
+            k: np.sqrt(v * (1 - v) / total_shots) for k, v in probabilities.items()
+        }
         return probabilities, error_margins
 
     @staticmethod
     def visualize_quantum_results(probabilities: dict, error_margins: dict):
+        """Visualize quantum results with a bar plot."""
         try:
             fig, ax = plt.subplots(figsize=(10, 6))
             bar_colors = ['#1f77b4', '#ff7f0e']  # Distinct colors for outcomes
@@ -202,34 +209,7 @@ class QuantumProcessor:
                 alpha=0.8
             )
 
-            # Customize the plot
-            ax.set_xlabel('Measurement Outcome', fontsize=12)
-            ax.set_ylabel('Probability', fontsize=12)
-            ax.set_title('Quantum Circuit Results: Bell State Preparation', fontsize=14)
-            ax.tick_params(axis='both', which='major', labelsize=10)
-            ax.set_ylim(0, 1)  # Set y-axis limit from 0 to 1 for probabilities
-
-            # Add value labels on top of each bar
-            for bar in bars:
-                height = bar.get_height()
-                ax.text(
-                    bar.get_x() + bar.get_width() / 2.,
-                    height,
-                    f'{height:.2f}',
-                    ha='center',
-                    va='bottom'
-                )
-
-            # Customize grid and add legend
-            ax.grid(axis='y', linestyle='--', alpha=0.7)
-            ax.text(
-                0.95, 0.95,
-                'Circuit: H(q0) -> CNOT(q0, q1)',
-                transform=ax.transAxes,
-                verticalalignment='top',
-                horizontalalignment='right',
-                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-            )
+            QuantumProcessor._customize_plot(ax, bars)
 
             plt.tight_layout()
             plt.savefig("quantum_results.png", dpi=300)
@@ -238,6 +218,35 @@ class QuantumProcessor:
         except Exception as e:
             logger.error(f"Error visualizing quantum results: {str(e)}")
             raise
+
+    @staticmethod
+    def _customize_plot(ax, bars):
+        """Customize the plot with labels, title, and annotations."""
+        ax.set_xlabel('Measurement Outcome', fontsize=12)
+        ax.set_ylabel('Probability', fontsize=12)
+        ax.set_title('Quantum Circuit Results: Bell State Preparation', fontsize=14)
+        ax.tick_params(axis='both', which='major', labelsize=10)
+        ax.set_ylim(0, 1)  # Set y-axis limit from 0 to 1 for probabilities
+
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(
+                bar.get_x() + bar.get_width() / 2.,
+                height,
+                f'{height:.2f}',
+                ha='center',
+                va='bottom'
+            )
+
+        ax.grid(axis='y', linestyle='--', alpha=0.7)
+        ax.text(
+            0.95, 0.95,
+            'Circuit: H(q0) -> CNOT(q0, q1)',
+            transform=ax.transAxes,
+            verticalalignment='top',
+            horizontalalignment='right',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+        )
 
 class SatelliteCommunication:
     def __init__(self):
