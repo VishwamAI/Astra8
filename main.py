@@ -101,13 +101,43 @@ def quantum_computing_tasks():
     counts = result.get_counts(qc)
     print("Quantum circuit measurement results:", counts)
 
-    # Visualize the results
-    plot_histogram(counts)
-    plt.title("Quantum Circuit Results")
-    plt.savefig("quantum_results.png")
+    # Calculate probabilities and error margins
+    total_shots = sum(counts.values())
+    probabilities = {k: v / total_shots for k, v in counts.items()}
+    error_margins = {k: np.sqrt(v * (1 - v) / total_shots) for k, v in probabilities.items()}
+
+    # Visualize the results with improvements
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bar_colors = ['#1f77b4', '#ff7f0e']  # Distinct colors for different outcomes
+    bars = ax.bar(probabilities.keys(), probabilities.values(), yerr=error_margins.values(),
+                  capsize=5, color=bar_colors, alpha=0.8)
+
+    # Customize the plot
+    ax.set_xlabel('Measurement Outcome', fontsize=12)
+    ax.set_ylabel('Probability', fontsize=12)
+    ax.set_title('Quantum Circuit Results: Bell State Preparation', fontsize=14)
+    ax.tick_params(axis='both', which='major', labelsize=10)
+    ax.set_ylim(0, 1)  # Set y-axis limit from 0 to 1 for probabilities
+
+    # Add value labels on top of each bar
+    for bar in bars:
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., height,
+                f'{height:.2f}', ha='center', va='bottom')
+
+    # Customize grid
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+
+    # Add a legend explaining the circuit
+    ax.text(0.95, 0.95, 'Circuit: H(q0) -> CNOT(q0, q1)', transform=ax.transAxes,
+            verticalalignment='top', horizontalalignment='right',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+
+    plt.tight_layout()
+    plt.savefig("quantum_results.png", dpi=300)
     plt.close()
 
-    print("Quantum computing tasks completed. Results saved in 'quantum_results.png'")
+    print("Quantum computing tasks completed. Enhanced results saved in 'quantum_results.png'")
 
 def satellite_communication_tasks():
     print("Running satellite communication tasks...")
