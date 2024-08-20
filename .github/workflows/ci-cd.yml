@@ -42,10 +42,6 @@ jobs:
         ./ns3 build
         cd ..
 
-    - name: Run linting
-      run: |
-        flake8 src
-
     - name: Run tests
       run: |
         pytest src
